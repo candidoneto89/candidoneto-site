@@ -11,7 +11,7 @@ interface Props {
 
 const { title, date, description, heroImage, cover } = Astro.props;
 const hero = heroImage ?? cover;
-const dateStr = date.toLocaleDateString('pt-BR', {
+const dateStr = date.toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
 });
@@ -109,6 +109,24 @@ const dateStr = date.toLocaleDateString('pt-BR', {
 
   @media (max-width: 800px) {
     .back-float { display: none; }
+
+    .post-wrap {
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+
+    .hero-wrap {
+      max-width: 100%;
+      margin-top: 1.5rem;
+    }
+
+    .hero-frame {
+      border-radius: 0;
+    }
+
+    .post-title {
+      font-size: 2rem;
+    }
   }
 
   .post-date {
@@ -162,6 +180,32 @@ const dateStr = date.toLocaleDateString('pt-BR', {
     border-radius: var(--radius);
     margin: 2rem 0;
   }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.88);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .lightbox.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .lightbox img {
+    max-width: 90vw;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    border-radius: var(--radius);
+    cursor: zoom-out;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+  }
   .prose :global(ul),
   .prose :global(ol) { margin: 1.25rem 0; padding-left: 1.25rem; }
   .prose :global(li) { margin: 0.4rem 0; }
@@ -188,6 +232,10 @@ const dateStr = date.toLocaleDateString('pt-BR', {
   }
 </style>
 
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image preview">
+  <img id="lightbox-img" src="" alt="" />
+</div>
+
 <script>
   const btn = document.querySelector<HTMLElement>('.back-float');
   const sentinel = document.getElementById('hero-sentinel');
@@ -198,4 +246,34 @@ const dateStr = date.toLocaleDateString('pt-BR', {
     );
     observer.observe(sentinel);
   }
+
+  const lightbox = document.getElementById('lightbox')!;
+  const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+
+  const open = (src: string, alt: string) => {
+    lightboxImg.src = src;
+    lightboxImg.alt = alt;
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const close = () => {
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+  };
+
+  document.querySelectorAll<HTMLImageElement>('.prose img[title="zoom"]').forEach((img) => {
+    img.style.cursor = 'zoom-in';
+    img.addEventListener('click', () => open(img.src, img.alt));
+  });
+
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) close();
+  });
+
+  lightboxImg.addEventListener('click', close);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') close();
+  });
 </script>
