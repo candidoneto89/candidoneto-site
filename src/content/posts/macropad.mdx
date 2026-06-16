@@ -1,11 +1,15 @@
 ---
 title: "Designing My Own Macropad"
 date: 2024-09-01
-cover: "/media/macropad.png"
-coverPoster: "/media/macropad.png"
+cover: "/media/macropad/macropad.png"
+coverPoster: "/media/macropad/macropad.png"
+heroImage: "/media/macropad/hero.png"
 description: "Designing a custom macropad from scratch: PCB, case, and firmware."
 draft: false
 ---
+
+import ImageRow from '../../components/ImageRow.astro';
+import Figure from '../../components/Figure.astro';
 
 Let's start this by acknowledging the massive rabbit hole that is the custom mechanical keyboard hobby. I was introduced to this world after testing my first OEM mechanical keyboard, and then I upgraded to a better one, a Logitech with a TKL layout. It took me some getting used to the new layout, but the typing experience was amazing, and it didn't take long for the social media algorithms to start flooding me with custom keyboard content.
 
@@ -23,7 +27,7 @@ To simplify things even further, I stuck to keycaps smaller than 2u to avoid usi
 
 There's a great tool for creating layouts, which I used to better visualize my idea and tweak it until I reach the design I wanted. The [keyboard-layout-editor](http://www.keyboard-layout-editor.com/) is quite handy, and even though it has a ton of features, such as exporting the layout (which I'll not get into here), I only used it to have a better visual of the layout. After tinkering a little bit with it, I got to this:
 
-![Macropad layout](/media/macropad-layout.png)
+<Figure src="/media/macropad/layout.png" alt="Macropad layout" caption="" />
 
 The idea behind the irregular layout is that I intended to use blank keycaps, or perhaps with random symbols, and this layout would help to memorize each button's function. At that point the knob's position in this layout and other design details.
 
@@ -53,9 +57,7 @@ It's also worth mentioning the use of the SK6812 MINI-E RGB leds, which has beco
 
 These were most of the components I designed myself, the rest are common packages easily available in EAGLE libraries.
 
-![Bottom of the PCB](/media/macropad-pcb.png)
-
-A glimpse of the bottom part of the PCB, here we can see the 3D models for each component, in particular the Kailh socket and the SK6812 MINI-E leds, and its reverse mounting style.
+<Figure src="/media/macropad/macropad-pcb.png" alt="Bottom of the PCB" caption="Bottom view of the PCB depicting the hot-swappable sockets." zoom />
 
 For the board's microcontroller, there are a few popular options, the Adafruit MacroPad RP2040, one of my inspirations for starting this project, uses the Raspberry Pi Pico RP2040 microcontroller, a lot of makers use STM32 chips, but the Atmega32u4, as seen on the Arduino Leonardo, the Elite-C V4, the Teensy 2.0 and the Pro Micro, remains the most popular. These boards are often used, especially on hand-wired builds. If that is something you might be into, I can recommend this [awesome guide](https://www.partsnotincluded.com/diy-stream-deck-mini-macro-keyboard/).
 
@@ -78,7 +80,7 @@ For the encoder, I had to decide here the size of the knob I would use, since th
 
 In this step I also designed the board shape, using curved corners and some mounting holes.
 
-![Board shape](/media/macropad-shape.png)
+<Figure src="/media/macropad/evolution.gif" alt="Board shape evolution" caption="" />
 
 I also designed a plate to help lining up the switches. There are a couple ways this can be done, it can be 3d printed, laser-cut, and from all sort of materials, like brass, aluminum, plastic, and so on, but I made a PCB to do this job, no traces or connections, just a simple FR4 plate.
 
@@ -88,10 +90,17 @@ After ordering the PCBs and parts from China, I knew I'd have to wait for a coup
 
 Pushing the board design to Fusion is straight-forward, and when designing the board I took the time to find 3d files for each of its components, such as the encoder, switches, sockets, ICs, resistors and connectors. The exported board in Fusion was as true-to-life as possible. This allowed me to start this design even before receiving the boards and assembling them, as it wasn't really needed to double-check dimensions.
 
-![Case in Fusion 360](/media/macropad-case.png)
+<ImageRow
+  images={[
+    "/media/macropad/blog1.png",
+    "/media/macropad/blog2.png",
+    "/media/macropad/blog0.png"
+  ]}
+  zoom={true}
+/>
 
 And so I've designed three versions, one printed in black PLA, with a acrylic window to let the PCB in display. Another one with just a clean base, printed in transparent/white PLA. And finally my favorite, a stacked acrylic case, which turned out great considering it was my first try designing one. I've designed every acrylic layer on Fusion and exported the sketch to Illustrator.
 
 ### Firmware
 
-The firmware initially was a little tricky for me, I thought I didn't need the QMK, so my first steps were hard coding the shortcuts I needed directly to the Atmega via Arduino and that was enough for me. In my next projects I actually used QMK and Vial, and am now thinking about porting it to this keyboard.
+The firmware initially was a little tricky for me, I thought I didn't need the QMK, so my first steps were hard coding the shortcuts I needed directly to the Atmega via Arduino and that was enough for me. In my next projects I actually used QMK and Vial, and am now thinking about porting it to this keyboard. You can find the firmware I used for this project on my [GitHub](https://github.com/candidoneto89/CN7-Macropad).

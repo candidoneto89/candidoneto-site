@@ -43,6 +43,14 @@ const dateStr = date.toLocaleDateString('en-US', {
         <slot />
       </div>
     </article>
+
+    <aside class="author-card">
+      <img class="author-avatar" src="/media/profile.png" alt="Cândido Neto" />
+      <div class="author-body">
+        <p class="author-name">About Cândido Neto</p>
+        <p class="author-bio">Hardware designer and embedded systems enthusiast based in Brazil. I build things that sit at the intersection of electronics, firmware, and industrial design.</p>
+      </div>
+    </aside>
   </div>
 </BaseLayout>
 
@@ -74,7 +82,41 @@ const dateStr = date.toLocaleDateString('en-US', {
 
   .post-wrap + .post-wrap {
     padding-top: 2.5rem;
-    padding-bottom: 6rem;
+    padding-bottom: 8rem;
+  }
+
+  .author-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin-top: 4rem;
+    margin-bottom: 20rem;
+    padding: 1.5rem;
+    background: var(--surface);
+    border-radius: 14px;
+  }
+
+  .author-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .author-name {
+    font-family: var(--font-serif);
+    font-weight: 300;
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+
+  .author-bio {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.65;
+    text-align: left;
   }
 
   .back {

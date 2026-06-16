@@ -1,0 +1,48 @@
+---
+interface Props {
+  src: string;
+  alt?: string;
+  caption: string;
+  zoom?: boolean;
+}
+
+const { src, alt, caption, zoom = false } = Astro.props;
+---
+
+<figure class="fig">
+  <img
+    src={src}
+    alt={alt ?? caption}
+    loading="lazy"
+    title={zoom ? 'zoom' : undefined}
+    class={zoom ? 'zoomable' : ''}
+  />
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .fig {
+    margin: 2rem 0;
+  }
+
+  .fig img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: var(--radius);
+    margin: 0;
+  }
+
+  .fig img.zoomable {
+    cursor: zoom-in;
+  }
+
+  .fig figcaption {
+    margin-top: 0.55rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+    text-align: center;
+    font-style: italic;
+    line-height: 1.5;
+  }
+</style>
