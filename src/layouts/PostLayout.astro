@@ -1,0 +1,201 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  date: Date;
+  description?: string;
+  heroImage?: string;
+  cover: string;
+}
+
+const { title, date, description, heroImage, cover } = Astro.props;
+const hero = heroImage ?? cover;
+const dateStr = date.toLocaleDateString('pt-BR', {
+  year: 'numeric',
+  month: 'long',
+});
+---
+
+<BaseLayout title={`${title} — Cândido Neto`} description={description}>
+  <a class="back-float" href="/" aria-label="Back to home">&larr; back</a>
+
+  <div class="post-wrap">
+    <a class="back" href="/">&larr; back</a>
+
+    <article>
+      <header class="post-head">
+        <time class="post-date" datetime={date.toISOString()}>{dateStr}</time>
+        <h1 class="post-title">{title}</h1>
+      </header>
+    </article>
+  </div>
+
+  <div class="hero-wrap" id="hero-sentinel">
+    <div class="hero-frame">
+      <img class="hero-img" src={hero} alt={title} />
+    </div>
+  </div>
+
+  <div class="post-wrap">
+    <article>
+      <div class="prose">
+        <slot />
+      </div>
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .post-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 0;
+  }
+
+  .hero-wrap {
+    max-width: 75vw;
+    margin: 2rem auto 0;
+  }
+
+  .hero-frame {
+    aspect-ratio: 3 / 1;
+    overflow: hidden;
+    border-radius: 14px;
+  }
+
+  .hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .post-wrap + .post-wrap {
+    padding-top: 2.5rem;
+    padding-bottom: 6rem;
+  }
+
+  .back {
+    display: inline-block;
+    margin-bottom: 3rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    transition: opacity 0.2s ease;
+  }
+  .back:hover { opacity: 0.75; }
+
+  .back-float {
+    position: fixed;
+    top: 1.5rem;
+    left: max(1.5rem, calc(50% - 420px));
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+    z-index: 100;
+  }
+  .back-float.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .back-float:hover { opacity: 0.75; }
+
+  @media (max-width: 800px) {
+    .back-float { display: none; }
+  }
+
+  .post-date {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: lowercase;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+  }
+
+  .post-title {
+    font-family: var(--font-serif);
+    font-weight: 300;
+    font-size: 2.6rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 3rem;
+  }
+
+  .prose :global(p) { margin: 1.25rem 0; text-align: justify; }
+  .prose :global(h2) {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 1.55rem;
+    letter-spacing: -0.01em;
+    margin: 2.75rem 0 1rem;
+    line-height: 1.2;
+  }
+  .prose :global(h3) {
+    font-family: var(--font-serif);
+    font-weight: 300;
+    font-style: italic;
+    font-size: 1.2rem;
+    margin: 2rem 0 0.75rem;
+    letter-spacing: -0.01em;
+    color: var(--muted);
+  }
+  .prose :global(a) {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.2s ease;
+  }
+  .prose :global(a:hover) { text-decoration-color: var(--accent); }
+  .prose :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    margin: 2rem 0;
+  }
+  .prose :global(ul),
+  .prose :global(ol) { margin: 1.25rem 0; padding-left: 1.25rem; }
+  .prose :global(li) { margin: 0.4rem 0; }
+  .prose :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: var(--surface);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+  }
+  .prose :global(pre) {
+    background: var(--surface);
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius);
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+  .prose :global(pre code) { background: none; padding: 0; }
+  .prose :global(blockquote) {
+    border-left: 2px solid var(--faint);
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    color: var(--muted);
+  }
+</style>
+
+<script>
+  const btn = document.querySelector<HTMLElement>('.back-float');
+  const sentinel = document.getElementById('hero-sentinel');
+  if (btn && sentinel) {
+    const observer = new IntersectionObserver(
+      ([entry]) => btn.classList.toggle('visible', !entry.isIntersecting),
+      { threshold: 0 }
+    );
+    observer.observe(sentinel);
+  }
+</script>

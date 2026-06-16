@@ -1,0 +1,109 @@
+---
+interface Props {
+  type?: 'info' | 'tip' | 'warning' | 'danger' | 'note';
+  title?: string;
+}
+
+const { type = 'info', title } = Astro.props;
+
+const icons: Record<string, string> = {
+  info:    '💡',
+  tip:     '✅',
+  warning: '⚠️',
+  danger:  '🚨',
+  note:    '📝',
+};
+
+const defaultTitles: Record<string, string> = {
+  info:    'Info',
+  tip:     'Dica',
+  warning: 'Atenção',
+  danger:  'Cuidado',
+  note:    'Nota',
+};
+
+const icon  = icons[type];
+const label = title ?? defaultTitles[type];
+---
+
+<div class={`callout callout-${type}`}>
+  <div class="callout-header">
+    <span class="callout-icon" aria-hidden="true">{icon}</span>
+    <span class="callout-title">{label}</span>
+  </div>
+  <div class="callout-body">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .callout {
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin: 1.75rem 0;
+    border-left: 4px solid;
+  }
+
+  .callout-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .callout-icon {
+    font-size: 1rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .callout-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+
+  .callout-body {
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .callout-body :global(p:first-child) { margin-top: 0; }
+  .callout-body :global(p:last-child)  { margin-bottom: 0; }
+
+  /* info — azul */
+  .callout-info {
+    background: rgba(79, 142, 247, 0.13);
+    border-color: #4f8ef7;
+  }
+  .callout-info .callout-title { color: #7aaeff; }
+
+  /* tip — verde */
+  .callout-tip {
+    background: rgba(52, 199, 120, 0.12);
+    border-color: #34c778;
+  }
+  .callout-tip .callout-title { color: #4fd98c; }
+
+  /* warning — âmbar */
+  .callout-warning {
+    background: rgba(251, 191, 36, 0.12);
+    border-color: #fbbf24;
+  }
+  .callout-warning .callout-title { color: #fcd34d; }
+
+  /* danger — vermelho */
+  .callout-danger {
+    background: rgba(248, 81, 73, 0.12);
+    border-color: #f85149;
+  }
+  .callout-danger .callout-title { color: #ff7b72; }
+
+  /* note — cinza */
+  .callout-note {
+    background: rgba(139, 139, 142, 0.1);
+    border-color: #6e6e73;
+  }
+  .callout-note .callout-title { color: #aeaeb2; }
+</style>

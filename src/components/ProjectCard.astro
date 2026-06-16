@@ -1,0 +1,87 @@
+---
+interface Props {
+  url: string;
+  title: string;
+  cover: string;
+  coverPoster?: string;
+}
+
+const { url, title, cover, coverPoster } = Astro.props;
+const isVideo = /\.(webm|mp4)$/i.test(cover);
+---
+
+<a class="card" href={url} aria-label={title}>
+  <div class="media">
+    {
+      isVideo ? (
+        <video autoplay loop muted playsinline poster={coverPoster}>
+          <source src={cover} />
+        </video>
+      ) : (
+        <img src={cover} alt={title} loading="lazy" />
+      )
+    }
+  </div>
+
+  <div class="overlay">
+    <p class="card-title">{title}</p>
+  </div>
+</a>
+
+<style>
+  .card {
+    position: relative;
+    display: block;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--surface);
+    border-radius: 14px;
+  }
+
+  .media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .media :global(video),
+  .media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scale(1);
+    transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1);
+    will-change: transform;
+  }
+
+  .card:hover .media :global(video),
+  .card:hover .media :global(img),
+  .card:focus-visible .media :global(video),
+  .card:focus-visible .media :global(img) {
+    transform: scale(1.07);
+  }
+
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.72) 0%,
+      rgba(0, 0, 0, 0.18) 40%,
+      rgba(0, 0, 0, 0) 100%
+    );
+    display: flex;
+    align-items: flex-end;
+    padding: 1.4rem 1.5rem;
+  }
+
+  .card-title {
+    color: #fff;
+    font-weight: 500;
+    font-size: 1.05rem;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+</style>

@@ -1,0 +1,62 @@
+---
+title: "Yet Another ESP32 Programmer"
+date: 2023-01-24
+cover: "/media/esp32-programmer.png"
+coverPoster: "/media/esp32-programmer.png"
+description: "A compact USB-C programmer board for the ESP32, designed from scratch."
+draft: false
+---
+
+import Callout from '../../components/Callout.astro';
+
+A small USB-C programmer board for the ESP32, built around a CH340 USB-to-serial
+chip instead of a full dev board. The goal was to have the smallest possible
+footprint that still exposes all the signals needed for flashing and debugging.
+
+## Por que mais uma placa dessas?
+
+As opções disponíveis no mercado têm sempre algum compromisso: ou são grandes demais,
+ou usam conectores micro-USB, ou incluem reguladores e LEDs que aumentam o consumo
+em stand-by. Esta aqui resolve exatamente o que eu precisava, nada mais.
+
+<Callout type="info">
+  Este projeto usa o CH340C, que já tem o oscilador interno e não precisa de cristal externo — reduz a contagem de componentes e simplifica o layout.
+</Callout>
+
+## Alimentação e proteção
+
+O barramento USB-C fornece 5V, que passa por um regulador LDO para os 3.3V do ESP32.
+Um MOSFET de proteção contra inversão de polaridade fica em série com a entrada.
+
+<Callout type="warning" title="Tensão nos IOs">
+  O ESP32 opera em 3.3V. Nunca conecte sinais de 5V diretamente aos pinos — o chip não é 5V-tolerante e pode ser danificado permanentemente.
+</Callout>
+
+<Callout type="danger" title="Boot mode">
+  Para entrar em modo de programação, GPIO0 precisa estar em LOW durante o reset. Se o seu circuito mantém GPIO0 flutuante, o chip pode não entrar em bootloader.
+</Callout>
+
+## Layout da PCB
+
+O roteamento priorizou manter as trilhas de dados USB o mais curtas possível e com
+impedância controlada de 90Ω diferencial. As vias de GND foram distribuídas ao redor
+do par diferencial para minimizar o retorno de corrente.
+
+<Callout type="tip" title="Dica de roteamento">
+  Use um plano de ground contínuo na camada inferior e adicione vias de stitching em torno do par USB — elimina a maior parte do ruído de modo comum sem precisar de ferrite.
+</Callout>
+
+## Firmware e testes
+
+Após montar a primeira unidade, o ESP32-S3 foi reconhecido imediatamente no
+`esptool.py` sem nenhum ajuste. A taxa de 921600 baud funcionou de forma estável.
+
+<Callout type="note">
+  O repositório inclui um script Python que automatiza o flash e abre o monitor serial logo em seguida — útil para iterar rápido durante o desenvolvimento.
+</Callout>
+
+## Próximos passos
+
+- Substituir a capa por um vídeo curto do render girando
+- Adicionar fotos da placa montada
+- Publicar os arquivos Gerber e o esquemático no GitHub

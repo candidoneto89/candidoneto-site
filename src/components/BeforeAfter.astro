@@ -1,0 +1,166 @@
+---
+interface Props {
+  before: string;
+  after: string;
+  beforeLabel?: string;
+  afterLabel?: string;
+  alt?: string;
+}
+
+const {
+  before,
+  after,
+  beforeLabel = 'Antes',
+  afterLabel = 'Depois',
+  alt = 'Comparacao antes e depois',
+} = Astro.props;
+---
+
+<figure class="ba" style="--pos: 50%;">
+  <img class="ba-base" src={before} alt={alt} draggable="false" />
+  <div class="ba-clip">
+    <img class="ba-after" src={after} alt={alt} draggable="false" />
+  </div>
+
+  <div class="ba-line" aria-hidden="true">
+    <div class="ba-grip"></div>
+  </div>
+
+  <span class="ba-tag ba-tag-l" aria-hidden="true">{beforeLabel}</span>
+  <span class="ba-tag ba-tag-r" aria-hidden="true">{afterLabel}</span>
+
+  <input
+    class="ba-range"
+    type="range"
+    min="0"
+    max="100"
+    value="50"
+    step="0.5"
+    aria-label={`Arraste para comparar ${beforeLabel} e ${afterLabel}`}
+  />
+</figure>
+
+<style>
+  .ba {
+    position: relative;
+    width: 100%;
+    margin: 2rem 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    user-select: none;
+    touch-action: none;
+    line-height: 0;
+  }
+
+  .ba-base {
+    width: 100%;
+    height: auto;
+  }
+
+  .ba-clip {
+    position: absolute;
+    inset: 0;
+    /* revela so a parte esquerda ate a posicao do divisor */
+    clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+  }
+
+  .ba-after {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ba-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--pos);
+    width: 2px;
+    transform: translateX(-1px);
+    background: var(--text);
+    pointer-events: none;
+  }
+
+  .ba-grip {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 34px;
+    height: 34px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: var(--text);
+    box-shadow: 0 0 0 4px rgba(14, 14, 15, 0.35);
+  }
+
+  .ba-grip::before,
+  .ba-grip::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border-block: 5px solid transparent;
+  }
+
+  .ba-grip::before {
+    left: 7px;
+    transform: translateY(-50%);
+    border-right: 7px solid var(--bg);
+  }
+
+  .ba-grip::after {
+    right: 7px;
+    transform: translateY(-50%);
+    border-left: 7px solid var(--bg);
+  }
+
+  .ba-tag {
+    position: absolute;
+    bottom: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text);
+    background: rgba(14, 14, 15, 0.6);
+    padding: 3px 7px;
+    border-radius: 4px;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .ba-tag-l { left: 10px; }
+  .ba-tag-r { right: 10px; }
+
+  /* range invisivel cobrindo tudo: da drag + teclado + toque de graca */
+  .ba-range {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+  }
+
+  .ba-range:focus-visible + .ba-line,
+  .ba-range:focus-visible ~ .ba-line { outline: none; }
+  .ba:has(.ba-range:focus-visible) .ba-grip {
+    box-shadow: 0 0 0 4px var(--text);
+  }
+</style>
+
+<script>
+  const setup = (fig: HTMLElement) => {
+    const range = fig.querySelector<HTMLInputElement>('.ba-range');
+    if (!range) return;
+    const update = () => fig.style.setProperty('--pos', `${range.value}%`);
+    range.addEventListener('input', update);
+    update();
+  };
+  document.querySelectorAll<HTMLElement>('.ba').forEach(setup);
+</script>

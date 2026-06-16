@@ -1,0 +1,65 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<BaseLayout title="Cândido Neto">
+  <div class="site-wrap">
+  <header class="masthead">
+    <span class="wordmark">Cândido Neto</span>
+  </header>
+
+  <main>
+    <ul class="grid">
+      {
+        posts.map((post) => (
+          <li>
+            <ProjectCard
+              url={`/posts/${post.id}/`}
+              title={post.data.title}
+              cover={post.data.cover}
+              coverPoster={post.data.coverPoster}
+            />
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+  </div>
+</BaseLayout>
+
+<style>
+  .site-wrap {
+    max-width: 65vw;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .masthead {
+    padding: 3.5rem 0 2.75rem;
+  }
+
+  .wordmark {
+    font-weight: 300;
+    font-size: 1.3rem;
+    letter-spacing: 0.08em;
+    color: var(--text);
+  }
+
+  .grid {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    padding-bottom: 4rem;
+  }
+
+  .grid li {
+    min-width: 0;
+  }
+</style>
