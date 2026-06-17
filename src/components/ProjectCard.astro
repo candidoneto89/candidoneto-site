@@ -14,7 +14,7 @@ const isVideo = /\.(webm|mp4)$/i.test(cover);
   <div class="media">
     {
       isVideo ? (
-        <video autoplay loop muted playsinline poster={coverPoster}>
+        <video loop muted playsinline poster={coverPoster}>
           <source src={cover} />
         </video>
       ) : (
@@ -85,3 +85,12 @@ const isVideo = /\.(webm|mp4)$/i.test(cover);
     letter-spacing: -0.01em;
   }
 </style>
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>('.card').forEach((card) => {
+    const video = card.querySelector<HTMLVideoElement>('video');
+    if (!video) return;
+    card.addEventListener('mouseenter', () => video.play());
+    card.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
+  });
+</script>
